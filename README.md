@@ -1,59 +1,121 @@
-# Talycap
+# Movies & Weather — Angular (v20)
+Proyecto de prueba técnica para talycap, componentes standalone y “zoneless” (sin Zone.js). Dos datasets sin llaves de API: películas con TVMaze y clima con Open-Meteo.
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.6.
+---
 
-## Development server
+## ¿Qué hace?
 
-To start a local development server, run:
+- **Home** con dos pestañas:
+  - **Películas**: tabla con póster, título, estreno y rating.
+    - Búsqueda por nombre (botón “Buscar” o Enter).
+  - **Clima**: tabla con ciudades preconfiguradas, temperatura y estado del tiempo (íconos de Material, sin imágenes externas).
 
-```bash
-ng serve
-```
+- **UI** con Angular Material
+  - Paginador en español.
+  - En móviles se oculta la columna de póster para que todo se lea mejor.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## Requisitos
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Node LTS 18+ (recomendado 20+).
+- npm 9+.
+- Angular CLI (se instala al crear el proyecto).
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Instalación
 
 ```bash
-ng build
+# Clonar
+git clone <repo>
+cd <carpeta-del-proyecto>
+
+# Instalar dependencias
+pnpm install
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+No hay que configurar llaves. Las URLs base de TVMaze y Open-Meteo están en `src/environments/*`.
 
-## Running unit tests
+---
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Ejecutar en desarrollo
+
+```bash
+npm start
+# abre http://localhost:4200
+```
+
+---
+
+## Ejecutar con DOCKER 
+
+```bash
+docker build -t talycap:prod .
+docker run --rm -p 8080:80 talycap:prod
+# abre http://localhost:8080
+```
+
+---
+
+## Estructura (resumen)
+
+```
+src/
+  app/
+    app.config.ts          # providers (router, http, paginator en ES, interceptores de error)
+    app.routes.ts          # rutas con loadComponent
+    app.ts.*            # laysout con toolbar y <router-outlet>
+    core/
+      constants/cities.ts  # ciudades por defecto 
+      i18n/paginator.intl.ts
+      interceptors/error.interceptor.ts
+      models/
+        pagination.model.ts
+        tvmaze.model.ts
+        weather.model.ts
+      services/
+        movies.service.ts  # TVMaze
+        weather.service.ts # Open-Meteo
+    features/
+      movies/movies-table.component.*
+      weather/weather-table.component.*
+    pages/
+      home/home.page.*
+  environments/
+    environment.ts
+    environment.prod.ts
+  styles.scss
+```
+
+---
+
+## Scripts 
+
+```bash
+npm start         # ng serve
+npm run build     # ng build
+npm test          # aqui se hizo algunos test unitarios 
+```
+
+---
+
+## Testing
+
+Los tests están preparados para el estilo standalone.
+
+Ejecutar:
 
 ```bash
 ng test
 ```
+---
 
-## Running end-to-end tests
 
-For end-to-end (e2e) testing, run:
 
-```bash
-ng e2e
-```
+## Autor y contacto
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Proyecto preparado para una prueba técnica.
+Juan Troconis
+jatroconis4@gmail.com
+3105249121

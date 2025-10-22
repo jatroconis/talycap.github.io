@@ -13,6 +13,6 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
       provideHttpClient(withInterceptors([errorInterceptor])),
-    { provide: MatPaginatorIntl, useFactory: getMatPaginatorIntlEs }
+    { provide: MatPaginatorIntl, useFactory: getMatPaginatorIntlEs },
   ]
 };
