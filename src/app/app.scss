@@ -1,2 +1,14 @@
+@use '@angular/material' as mat;
+
+$theme: mat.define-theme((
+  color: (theme-type: light),
+  typography: (brand-family: 'Roboto, Arial, sans-serif'),
+  density: (scale: 0)
+));
+
+:root {
+  @include mat.all-component-themes($theme);
+}
+
 .container { padding: 16px; max-width: 1200px; margin: 0 auto; }
 .ml-2 { margin-left: 8px; }
