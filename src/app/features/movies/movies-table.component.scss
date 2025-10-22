@@ -1,0 +1,6 @@
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.search { width: min(420px, 100%); }
+.table-wrap { position: relative; min-height: 120px; }
+.center { display: grid; place-items: center; height: 120px; }
+table { width: 100%; }
+img { border-radius: 4px; object-fit: cover; }

@@ -1,5 +1,4 @@
-import { City } from "../models/weather.model";
-
+import { City } from '../models';
 
 export const DEFAULT_CITIES: City[] = [
   { id: 'bogota-co',      name: 'Bogotá',        lat: 4.7110,  lon: -74.0721, country: 'CO' },
