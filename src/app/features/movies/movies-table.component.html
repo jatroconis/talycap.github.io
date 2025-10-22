@@ -1,68 +1,103 @@
+<mat-card aria-label="Listado de películas" class="card-region">
+  <!-- Heading accesible invisible (destino de foco tras cargar) -->
+  <h3 #resultsHeading class="sr-only" tabindex="-1">Resultados de películas</h3>
 
-<mat-card>
-  <div class="toolbar">
+  <div class="toolbar" role="form" aria-label="Formulario de búsqueda de películas">
     <mat-form-field appearance="outline" class="search">
-      <mat-label>Buscar película</mat-label>
-      <input matInput [formControl]="searchCtrl" placeholder="Ej. Inception" />
+      <mat-label>Término de búsqueda</mat-label>
+      <input
+        matInput
+        [formControl]="searchCtrl"
+        placeholder="Ej. Inception"
+        aria-label="Buscar por título de película"
+        (keyup.enter)="onSearch()"
+      />
       @if (searchCtrl.value) {
-        <button mat-icon-button matSuffix aria-label="Limpiar" (click)="searchCtrl.setValue('')">
+        <button
+          mat-icon-button
+          matSuffix
+          aria-label="Limpiar término de búsqueda"
+          (click)="onClear()">
           <mat-icon>close</mat-icon>
         </button>
       }
     </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSearch()"
+      aria-label="Ejecutar búsqueda"
+        [disabled]="loading() || (searchCtrl.value.trim() === currentQ())">
+      <mat-icon>search</mat-icon>
+      Buscar
+    </button>
   </div>
 
-  <div class="table-wrap">
+  <div class="table-wrap" [attr.aria-busy]="loading()" aria-live="polite">
     @if (loading()) {
-      <div class="center">
+      <div class="center" role="status" aria-label="Cargando resultados">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
       </div>
     }
 
     @if (vm$ | async; as vm) {
-      <table mat-table [dataSource]="vm.items" class="mat-elevation-z1">
+      @if (vm.total === 0 && !loading()) {
+        <div class="empty" role="status">No se encontraron resultados.</div>
+      } @else {
+        <table
+          mat-table
+          [dataSource]="vm.items"
+          [trackBy]="trackById"
+          class="mat-elevation-z1"
+          aria-describedby="tabla-descripcion">
 
-        <!-- Poster -->
-        <ng-container matColumnDef="poster">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let m">
-            @if (m.posterUrl) {
-            <img [src]="imgUrl(m.posterUrl)" [alt]="posterAlt(m.title)" width="40" height="60" loading="lazy" />
-            } @else {
-            <mat-icon aria-hidden="true">image_not_supported</mat-icon>
-            }
-          </td>
-        </ng-container>
+          <caption id="tabla-descripcion" class="sr-only">
+            Tabla de resultados de películas, ordenadas por coincidencia de búsqueda.
+          </caption>
 
-        <!-- Título -->
-        <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef>Título</th>
-          <td mat-cell *matCellDef="let m">{{ m.title }}</td>
-        </ng-container>
+          <!-- Poster (se oculta en pantallas pequeñas por CSS) -->
+          <ng-container matColumnDef="poster">
+            <th mat-header-cell *matHeaderCellDef aria-hidden="true"></th>
+            <td mat-cell *matCellDef="let m">
+              @if (m.posterUrl) {
+                <img [src]="imgUrl(m.posterUrl)" [alt]="posterAlt(m.title)" width="40" height="60" loading="lazy" />
+              } @else {
+                <mat-icon aria-hidden="true">image_not_supported</mat-icon>
+              }
+            </td>
+          </ng-container>
 
-        <!-- Fecha -->
-        <ng-container matColumnDef="releaseDate">
-          <th mat-header-cell *matHeaderCellDef>Estreno</th>
-          <td mat-cell *matCellDef="let m">{{ m.releaseDate | date }}</td>
-        </ng-container>
+          <!-- Título -->
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Título</th>
+            <td mat-cell *matCellDef="let m">{{ m.title }}</td>
+          </ng-container>
 
-        <!-- Rating -->
-        <ng-container matColumnDef="voteAverage">
-          <th mat-header-cell *matHeaderCellDef>Rating</th>
-          <td mat-cell *matCellDef="let m">{{ m.voteAverage | number:'1.1-1' }}</td>
-        </ng-container>
+          <!-- Fecha -->
+          <ng-container matColumnDef="releaseDate">
+            <th mat-header-cell *matHeaderCellDef>Estreno</th>
+            <td mat-cell *matCellDef="let m">{{ m.releaseDate | date }}</td>
+          </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
+          <!-- Rating -->
+          <ng-container matColumnDef="voteAverage">
+            <th mat-header-cell *matHeaderCellDef>Rating</th>
+            <td mat-cell *matCellDef="let m">{{ m.voteAverage | number:'1.1-1' }}</td>
+          </ng-container>
 
-      <mat-paginator
-        [length]="vm.total"
-        [pageIndex]="vm.page - 1"
-        [pageSize]="20"
-        [pageSizeOptions]="[10,20,50]"
-        (page)="onPage($event)">
-      </mat-paginator>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator
+          [length]="vm.total"
+          [pageIndex]="vm.page - 1"
+          [pageSize]="pageSize()"
+          [pageSizeOptions]="[10,20,50]"
+          (page)="onPage($event)">
+        </mat-paginator>
+      }
     }
   </div>
 </mat-card>

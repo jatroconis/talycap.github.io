@@ -1,10 +1,15 @@
-<mat-card>
-  <div class="toolbar">
+<mat-card aria-label="Listado de clima por ciudades">
+  <div class="toolbar" role="form" aria-label="Filtro por ciudad">
     <mat-form-field appearance="outline" class="search">
       <mat-label>Filtrar por ciudad</mat-label>
-      <input matInput [formControl]="filterCtrl" placeholder="Ej. Bogotá" />
+      <input
+        matInput
+        [formControl]="filterCtrl"
+        placeholder="Ej. Bogotá"
+        aria-label="Filtrar resultados por nombre de ciudad"
+      />
       @if (filterCtrl.value) {
-        <button mat-icon-button matSuffix aria-label="Limpiar" (click)="filterCtrl.setValue('')">
+        <button mat-icon-button matSuffix aria-label="Limpiar filtro" (click)="filterCtrl.setValue('')">
           <mat-icon>close</mat-icon>
         </button>
       }
@@ -12,40 +17,47 @@
   </div>
 
   @if (loading) {
-    <div class="center"><mat-progress-spinner mode="indeterminate"></mat-progress-spinner></div>
+    <div class="center" role="status" aria-label="Cargando clima">
+      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    </div>
   } @else {
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z1">
+    @if (dataSource.data.length === 0) {
+      <div class="empty" role="status">No hay datos para mostrar.</div>
+    } @else {
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z1" aria-describedby="tabla-clima-desc">
+        <caption id="tabla-clima-desc" class="sr-only">Tabla con temperatura y estado del clima por ciudad.</caption>
 
-      <!-- Icono -->
-      <ng-container matColumnDef="icon">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let cw">
-          <mat-icon aria-hidden="true">{{ cw.icon }}</mat-icon>
-        </td>
-      </ng-container>
+        <!-- Icono -->
+        <ng-container matColumnDef="icon">
+          <th mat-header-cell *matHeaderCellDef aria-hidden="true"></th>
+          <td mat-cell *matCellDef="let cw">
+            <mat-icon aria-hidden="true">{{ cw.icon }}</mat-icon>
+          </td>
+        </ng-container>
 
-      <!-- Ciudad -->
-      <ng-container matColumnDef="city">
-        <th mat-header-cell *matHeaderCellDef>Ciudad</th>
-        <td mat-cell *matCellDef="let cw">{{ cw.city.name }}</td>
-      </ng-container>
+        <!-- Ciudad -->
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef>Ciudad</th>
+          <td mat-cell *matCellDef="let cw">{{ cw.city.name }}</td>
+        </ng-container>
 
-      <!-- Temp -->
-      <ng-container matColumnDef="tempC">
-        <th mat-header-cell *matHeaderCellDef>Temp (°C)</th>
-        <td mat-cell *matCellDef="let cw">{{ cw.tempC | number:'1.0-1' }}</td>
-      </ng-container>
+        <!-- Temp -->
+        <ng-container matColumnDef="tempC">
+          <th mat-header-cell *matHeaderCellDef>Temp (°C)</th>
+          <td mat-cell *matCellDef="let cw">{{ cw.tempC | number:'1.0-1' }}</td>
+        </ng-container>
 
-      <!-- Descripción -->
-      <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef>Estado</th>
-        <td mat-cell *matCellDef="let cw">{{ cw.description }}</td>
-      </ng-container>
+        <!-- Descripción -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let cw">{{ cw.description }}</td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
 
-    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5,10,20]"></mat-paginator>
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[5,10,20]"></mat-paginator>
+    }
   }
 </mat-card>

@@ -1,5 +1,4 @@
-// src/app/features/weather/weather-table.component.ts
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WeatherService } from '../../core/services/weather.service';
 import { DEFAULT_CITIES } from '../../core/constants/cities';
@@ -13,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-weather-table',
@@ -33,6 +33,7 @@ export class WeatherTableComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   filterCtrl = new FormControl<string>('', { nonNullable: true });
 
+  private readonly announcer = inject(LiveAnnouncer);
   constructor(private readonly weather: WeatherService) {
     this.dataSource.filterPredicate = (cw, f) =>
       cw.city.name.toLowerCase().includes((f ?? '').toLowerCase());
@@ -41,31 +42,27 @@ export class WeatherTableComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
 
-    // Cargar clima de ciudades por defecto
-    // se agregaa (cacheado en el servicio)
     this.weather.getMany(DEFAULT_CITIES).subscribe({
       next: res => {
         this.dataSource.data = res.items;
         this.loading = false;
+        this.announcer.announce(`Se cargaron ${res.items.length} ciudades con clima actual.`);
       },
       error: () => {
         this.dataSource.data = [];
         this.loading = false;
+        this.announcer.announce('No se pudo cargar el clima. Intenta más tarde.');
       }
     });
 
-    // Filtro
     this.filterCtrl.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(v => {
       this.dataSource.filter = (v ?? '').trim().toLowerCase();
-      // Reset de página al filtrar
       if (this.dataSource.paginator) this.dataSource.paginator.firstPage();
     });
   }
 
-  alt(cw: CityWeather) {
-    return `Clima en ${cw.city.name}: ${cw.description}`;
-  }
+  alt(cw: CityWeather) { return `Clima en ${cw.city.name}: ${cw.description}`; }
 }
