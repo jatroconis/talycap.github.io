@@ -3,7 +3,10 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": false
+    "analytics": false,
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -37,17 +40,28 @@
           "configurations": {
             "production": {
               "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
-                }
-              ],
+  {
+    "type": "initial",
+    "maximumWarning": "1.2mb",
+    "maximumError": "2mb"
+  },
+  {
+    "type": "anyScript",
+    "maximumWarning": "800kb",
+    "maximumError": "1.6mb"
+  },
+  {
+    "type": "bundle",
+    "name": "styles",
+    "maximumWarning": "160kb",
+    "maximumError": "220kb"
+  },
+  {
+    "type": "anyComponentStyle",
+    "maximumWarning": "120kb",
+    "maximumError": "180kb"
+  }
+],
               "outputHashing": "all"
             },
             "development": {
@@ -86,6 +100,15 @@
             ],
             "styles": [
               "src/styles.scss"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
             ]
           }
         }

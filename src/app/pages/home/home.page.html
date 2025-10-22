@@ -1,15 +1,10 @@
-<mat-card>
-  <h2 class="title">Home</h2>
-  <p>Base lista. Luego aquí iran tabs (Películas/Clima) con tablas.</p>
-
-  <div class="actions">
-    <button mat-raised-button color="primary" (click)="inc()">+1</button>
-    <button mat-stroked-button color="primary" (click)="dec()">-1</button>
-  </div>
-
-  @if (count() >= 0) {
-    <p class="muted">{{ countText() }}</p>
-  } @else {
-    <p class="muted">Valor negativo: {{ count() }}</p>
-  }
+<mat-card class="home-wrap">
+  <mat-tab-group [selectedIndex]="tabIndex()" (selectedIndexChange)="onTabChange($event)">
+    <mat-tab label="Películas">
+      <app-movies-table />
+    </mat-tab>
+    <mat-tab label="Clima">
+      <app-weather-table />
+    </mat-tab>
+  </mat-tab-group>
 </mat-card>

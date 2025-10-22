@@ -1,0 +1,5 @@
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.search { width: min(360px, 100%); }
+.center { display: grid; place-items: center; height: 120px; }
+table { width: 100%; }
+img { border-radius: 4px; object-fit: contain; }
